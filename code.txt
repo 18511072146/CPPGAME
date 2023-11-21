@@ -1,0 +1,200 @@
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+class role {
+public:
+    int life = 30;
+    int starvation = 0;
+};
+
+class weapons : public role {
+public:
+    int munitions = 0;
+    int damage = 5;
+    void Munitions(int num) {
+        munitions += num;
+    }
+};
+
+class zombies : public role {
+public:
+    void attack(role& rol) {
+        rol.life -= 10;
+    }
+};
+
+class shoot : public weapons ,public role{
+public:
+    void kill(weapons& weap,role& rol) {
+        if (weap.munitions >= 1) {
+            if (weap.damage == 15) {
+                cout << "ak" << endl;
+                cout << "You lost some blood while killing the walker (current blood level "<<rol.life<<"), please look for high damage weapons as soon as possible" << endl;
+            }
+            else if (weap.damage == 18) {
+                cout << "awp" << endl;
+                cout << "You lost some blood while killing the walker (current blood level " << rol.life << "), please look for high damage weapons as soon as possible" << endl;
+            }
+            else if (weap.damage == 5) {
+                cout << "clavate" << endl;
+                cout << "You lost some blood while killing the walker (current blood level " << rol.life << "), please look for high damage weapons as soon as possible" << endl;
+            }
+
+            weap.munitions -= 1;
+        }
+        else {
+            cout << "You cannot shoot! Run!" << endl;
+        }
+    }
+};
+class foods : public role {
+public:
+    int food=0;
+    int getHealth() {
+        return(starvation - 1);
+    }
+};
+int main() {
+    srand(time(0));
+    cout << "-------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "                                                        Welcome to the zombie armageddon!" << endl;
+    cout << "                                        You are a survivor and now you need to survive in this city." << endl;
+    cout << "                               You'll need to keep searching for food, guns and teammates while dodging walkers." << endl;
+    cout << "                                                  You can do this by entering commands." << endl;
+    cout << "" << endl;
+    cout << "                                                            Type help to see help." << endl;
+    cout << "-------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    
+    role rol;
+    shoot shoo;
+    weapons weap;
+    foods foo;
+    zombies zom;
+    string guns = "clavate";
+    while (rol.life > 0) {
+        // 玩家输入指令
+        string command;
+        cout << "" << endl;
+        cout << "" << endl;
+        cout << "Please enter instructions：";
+        cin >> command;
+        cout << "" << endl;
+        cout << "" << endl;
+
+        // 处理指令
+        if (command == "help") {
+            cout << "Available commands：                                                            life value：" << rol.life << endl;
+            cout << "1 - Check out the surroundings                                                  hunger value：" << rol.starvation << endl;
+            cout << "2 - eat something                                                               Number of munitions；"<< weap.munitions << endl;
+            cout << "3 - shoot a gun                                                                 Food reserves："<<foo.food << endl;
+            cout << "help - View Help                                                                weaponry：" <<guns<< endl;
+            cout << "" << endl;
+            
+        }
+        else if (command == "1") {
+            rol.starvation++;
+            int de_search = rand() % 2;
+            for (int i = 0; i < 3; i++) {
+                int search = rand() % 4;
+                if (search == 0) {
+                    weap.munitions += 1;
+                    cout << "munitions + 1" << endl;
+                }
+                else if (search == 1) {
+                    cout << "Acquisition of ak" << endl;
+                    weap.damage = 15;
+                    guns = "AK47";
+                }
+                else if (search == 2) {
+                    foo.food += 1;
+                    cout << "foods + 1" << endl;
+                }
+                else {
+                    
+                }
+
+            }
+                if (de_search == 1) {
+                    cout << "You were robbed by 10 robbers." << endl;
+                    cout << "Attack or not(yes or no)：";
+                    string choose;
+                    cin >> choose;
+                    while (choose != "yes" && choose != "no")
+                    {
+                        cout << "Requests for decision-making： ";
+                        cin >> choose;
+                    }
+                        if (choose == "yes") {
+                            weap.munitions -= 1;
+                            rol.life -= 20;
+                            
+                            int take = rand() % 5;
+                            if (take == 0) {
+                                weap.munitions += 10;
+                                cout << "Access to AWP" << endl;
+                                weap.damage = 18;
+                                guns = "AWP";
+                                if (rol.life > 1) {
+                                    cout << "Your decision has cost you some blood, but it has also gained you some advantage" << endl;
+                                }
+                            }
+                            else {
+                                if (rol.life > 1) {
+                                    cout << "Your decision cost you some blood, while scavenging nothing in the way of loot." << endl;
+                                }
+                            }
+                        }
+                        else if (choose == "no") {
+                            cout << "You got away." << endl;
+                        }
+                        else {
+                            
+                        }
+                }
+            
+        }
+        else if (command == "2") {
+            if (foo.food > 0) {
+                if (rol.starvation == 0) {
+                    cout << "You're not hungry enough to eat." << endl;
+                }
+                else {
+                    cout << "You eat some food, your hunger is reduced, and you regain some life points." << endl;
+                    rol.starvation--;
+                    foo.food--;
+                    if (rol.life != 100) {
+                        rol.life += 5;
+                    }
+                }
+            }else{
+                cout << "There's no food to eat." << endl;
+            }
+            
+        }
+        else if (command == "3") {
+            zom.attack(rol);
+            shoo.kill(weap,rol);
+            
+        }
+        else {
+            cout << "Invalid command, please re-enter." << endl;
+        }
+
+       
+        if (rol.starvation > 10) {
+            rol.life--;
+            cout << "You have lost one life point due to hunger." << endl;
+            rol.starvation = 10;
+        }
+        
+    }
+    cout << "You die, game over." << endl;
+
+    return 0;
+   
+}
